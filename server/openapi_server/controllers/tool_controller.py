@@ -5,10 +5,7 @@ from openapi_server.models.license import License
 
 def get_tool():  # noqa: E501
     """Get tool information
-
     Get information about the tool # noqa: E501
-
-
     :rtype: Tool
     """
     tool = Tool(
@@ -26,12 +23,9 @@ def get_tool():  # noqa: E501
     return tool, 200
 
 
-def get_tool_dependencies():  # noqa: E501
+def get_tool_dependencies():
     """Get tool dependencies
-
     Get the dependencies of this tool # noqa: E501
-
-
     :rtype: ToolDependencies
     """
     return ToolDependencies(tool_dependencies=[]), 200

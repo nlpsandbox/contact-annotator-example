@@ -8,20 +8,20 @@ from flask import json
 from openapi_server.test.integration import BaseTestCase
 
 
-class TestTextDateAnnotationController(BaseTestCase):
-    """TextDateAnnotationController integration test stubs"""
+class TestTextContactAnnotationController(BaseTestCase):
+    """TextContactAnnotationController integration test stubs"""
 
-    def test_create_text_date_annotations(self):
-        """Test case for create_text_date_annotations
+    def test_create_text_contact_annotations(self):
+        """Test case for create_text_contact_annotations
 
-        Annotate dates in a clinical note
+        Annotate contacts in a clinical note
         """
-        text_date_annotation_request = {
+        text_contact_annotation_request = {
             "note": {
                 "identifier": "awesome-note",
                 "type": "loinc:LP29684-5",
                 "patientId": "awesome-patient",
-                "text": "On 12/26/2020, Ms. Chloe Price met with Dr. Prescott."
+                "text": "On 12/26/2020, Ms. Chloe Price met with Dr. Prescott. Her email is prescott@gmail.com."  # noqa: E501
             }
         }
         headers = {
@@ -29,10 +29,10 @@ class TestTextDateAnnotationController(BaseTestCase):
             'Content-Type': 'application/json',
         }
         response = self.client.open(
-            '/api/v1/textDateAnnotations',
+            '/api/v1/textContactAnnotations',
             method='POST',
             headers=headers,
-            data=json.dumps(text_date_annotation_request),
+            data=json.dumps(text_contact_annotation_request),
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
