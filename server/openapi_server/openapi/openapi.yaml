@@ -6,27 +6,27 @@ info:
     url: https://nlpsandbox.io
   description: |
     # Introduction
-    The Date Annotator is one of the first type of NLP Tools that can be benchmarked on [nlpsandbox.io](https://nlpsandbox.io). A Date Annotator takes as input a clinical note and outputs a list of predicted date annotations found in the clinical note. This OpenAPI document describes the specification of a Date Annotator. This specification includes the schemas of the input and output data, and the conditions that this annotator must meet if you want to benchmark its performance on [nlpsandbox.io](https://nlpsandbox.io).
+    The Contact Annotator is one of the first NLP Sandbox tools that can be benchmarked on [nlpsandbox.io](https://nlpsandbox.io). A contact annotator takes as input a clinical note and outputs a list of predicted contact annotations found in the clinical note. This OpenAPI document describes the specification of a contact Annotator. This specification includes the schemas of the input and output data, and the conditions that this annotator must meet if you want to benchmark its performance on [nlpsandbox.io](https://nlpsandbox.io).
     # Getting Started
-    The GitHub repository [nlpsandbox/date-annotator-example](https://github.com/nlpsandbox/date-annotator-example) provides a simple example implementation of a Python-Flask Date Annotator. By the end of the tutorial available in this repository, you will have built a Docker image for a simple Date Annotator. You will then be able to submit this image to [nlpsandbox.io](https://nlpsandbox.io) to benchmark its performance.
+    The GitHub repository (will be added later) [nlpsandbox/contact-annotator-example](https://github.com/nlpsandbox/contact-annotator-example) provides a rules-based example implementation of a Python-Flask contact Annotator. By the end of the tutorial available in this repository, you will have built a Docker image for a simple contact Annotator. You will then be able to submit this image to [nlpsandbox.io](https://nlpsandbox.io) to benchmark its performance.
     # Benchmarking Requirements
-    The following conditions must be met by your Date Annotator if you want to benchmark its performance on [nlpsandbox.io](https://nlpsandbox.io).
+    The following conditions must be met by your Contact Annotator if you want to benchmark its performance on [nlpsandbox.io](https://nlpsandbox.io).
     - The endpoint `/` must redirect to `/api/v1/tool`.
     - The endpoint `/ui` must redirect to the web interface (UI).
     - The output of this tool must be reproducible: a given input should always
       generate the same output.
 
-    - This tool must not attempt to connect to remote server for reproducibility,
-      robustness, and security reasons. When benchmarked on [nlpsandbox.io](https://nlpsandbox.io),
-      this tool will not be able to connect to remote servers.
+    - To ensure results are reproducible, robust, and secure, this tool cannot
+      connect to any remote server. When benchmarked on
+      [nlpsandbox.io](https://nlpsandbox.io), this tool will not be able to
+      connect to remote servers.
 
     # Examples
-    - [Date Annotator Example (Python)](https://github.com/nlpsandbox/date-annotator-example)
-    - [Date Annotator Example (Java)](https://github.com/nlpsandbox/date-annotator-example-java)
+    - [Contact Annotator Example (Python)](https://github.com/nlpsandbox/contact-annotator-example)
   license:
     name: Apache 2.0
     url: https://github.com/nlpsandbox/nlpsandbox-schemas/blob/develop/LICENSE
-  title: NLP Sandbox Date Annotator API
+  title: NLP Sandbox Contact Annotator API
   version: 1.0.2
   x-logo:
     url: https://nlpsandbox.github.io/nlpsandbox-schemas/logo.png
@@ -36,8 +36,8 @@ servers:
 tags:
 - description: Operations about health checks
   name: HealthCheck
-- description: Operations about text date annotations
-  name: TextDateAnnotation
+- description: Operations about text contact annotations
+  name: TextContactAnnotation
 - description: Operations about this tool
   name: Tool
 paths:
@@ -69,21 +69,21 @@ paths:
       tags:
       - HealthCheck
       x-openapi-router-controller: openapi_server.controllers.health_check_controller
-  /textDateAnnotations:
+  /textContactAnnotations:
     post:
-      description: Return the date annotations found in a clinical note
-      operationId: create_text_date_annotations
+      description: Return the contact annotations found in a clinical note
+      operationId: create_text_contact_annotations
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TextDateAnnotationRequest'
+              $ref: '#/components/schemas/TextContactAnnotationRequest'
       responses:
         "200":
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TextDateAnnotationResponse'
+                $ref: '#/components/schemas/TextContactAnnotationResponse'
           description: Success
         "400":
           content:
@@ -98,10 +98,10 @@ paths:
                 $ref: '#/components/schemas/Error'
           description: The request cannot be fulfilled due to an unexpected server
             error
-      summary: Annotate dates in a clinical note
+      summary: Annotate contact information in a clinical note
       tags:
-      - TextDateAnnotation
-      x-openapi-router-controller: openapi_server.controllers.text_date_annotation_controller
+      - TextContactAnnotation
+      x-openapi-router-controller: openapi_server.controllers.text_contact_annotation_controller
   /tool:
     get:
       description: Get information about the tool
@@ -190,29 +190,36 @@ components:
           - pass
           - fail
           - warn
+          title: status
           type: string
       required:
       - status
+      title: HealthCheck
       type: object
     Error:
       description: Problem details (tools.ietf.org/html/rfc7807)
       properties:
         title:
           description: A human readable documentation for the problem type
+          title: title
           type: string
         status:
           description: The HTTP status code
+          title: status
           type: integer
         detail:
           description: A human readable explanation specific to this occurrence of
             the problem
+          title: detail
           type: string
         type:
           description: An absolute URI that identifies the problem type
+          title: type
           type: string
       required:
       - status
       - title
+      title: Error
       type: object
     NoteId:
       description: The ID of the clinical note
@@ -232,7 +239,7 @@ components:
       description: A clinical note
       example:
         identifier: awesome-note
-        text: On 12/26/2020, Ms. Chloe Price met with Dr. Prescott in Seattle.
+        text: On 12/26/2020, Ms. Chloe Price met with Dr. Prescott in Seattle. Her number is 203-333-4545
         type: loinc:LP29684-5
         patientId: awesome-patient
       properties:
@@ -261,13 +268,14 @@ components:
       - patientId
       - text
       - type
+      title: Note
       type: object
-    TextDateAnnotationRequest:
-      description: A request to annotate dates in a clinical note
+    TextContactAnnotationRequest:
+      description: A request to annotate contacts in a clinical note
       example:
         note:
           identifier: awesome-note
-          text: On 12/26/2020, Ms. Chloe Price met with Dr. Prescott in Seattle.
+          text: On 12/26/2020, Ms. Chloe Price met with Dr. Prescott in Seattle. Her number is 203-333-4545.
           type: loinc:LP29684-5
           patientId: awesome-patient
       properties:
@@ -305,40 +313,43 @@ components:
       - start
       - text
       type: object
-    TextDateAnnotation:
+    TextContactAnnotation:
       allOf:
       - $ref: '#/components/schemas/TextAnnotation'
-      - $ref: '#/components/schemas/TextDateAnnotation_allOf'
-      description: A date annotation in a text
+      - $ref: '#/components/schemas/TextContactAnnotation_allOf'
+      description: A contact annotation in a text
       example:
         start: 42
-        length: 10
-        text: 10/26/2020
-        dateFormat: MM/DD/YYYY
+        length: 11
+        text: dave@uw.edu
+        contactType: email
         confidence: 95.5
+      title: TextContactAnnotation
       type: object
-    TextDateAnnotationResponse:
-      description: The response to a dates annotation request
+    TextContactAnnotationResponse:
+      description: The response to a contact annotation request
       example:
-        textDateAnnotations:
+        textContactAnnotations:
         - start: 42
-          length: 10
-          text: 10/26/2020
-          dateFormat: MM/DD/YYYY
+          length: 11
+          text: dave@uw.edu
+          contactType: email
           confidence: 95.5
         - start: 42
-          length: 10
-          text: 10/26/2020
-          dateFormat: MM/DD/YYYY
+          length: 11
+          text: dave@uw.edu
+          contactType: email
           confidence: 95.5
       properties:
-        textDateAnnotations:
-          description: A list of date annotations
+        textContactAnnotations:
+          description: A list of contact annotations
           items:
-            $ref: '#/components/schemas/TextDateAnnotation'
+            $ref: '#/components/schemas/TextContactAnnotation'
+          title: textContactAnnotations
           type: array
       required:
-      - textDateAnnotations
+      - textContactAnnotations
+      title: TextContactAnnotationResponse
       type: object
     License:
       description: The license (license keyword used by GitHub)
@@ -379,6 +390,7 @@ components:
       - zlib
       - none
       example: apache-2.0
+      title: License
       type: string
     ToolType:
       description: The type of this tool
@@ -455,6 +467,7 @@ components:
       - type
       - url
       - version
+      title: Tool
       type: object
     ToolDependencies:
       description: A list of tool dependencies
@@ -485,14 +498,21 @@ components:
           description: A list of tools
           items:
             $ref: '#/components/schemas/Tool'
+          title: toolDependencies
           type: array
       required:
       - toolDependencies
+      title: ToolDependencies
       type: object
-    TextDateAnnotation_allOf:
+    TextContactAnnotation_allOf:
       properties:
-        dateFormat:
-          description: Date format (ISO 8601)
-          example: MM/DD/YYYY
+        contactType:
+          description: Type of contact information
+          enum:
+          - email
+          - fax
+          - phone
+          - url
+          - other
           type: string
       type: object
