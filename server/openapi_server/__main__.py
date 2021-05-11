@@ -12,7 +12,7 @@ def main():
                 arguments={'title': 'NLP Sandbox Contact Annotator API'},
                 pythonic_params=True)
 
-    app.run(port=8080)
+    app.run(port=8080, debug=False)
 
 
 if __name__ == '__main__':
