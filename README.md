@@ -21,8 +21,8 @@ note.
 
 ### Specification
 
-- Contact Annotator API version: 1.1.0
-- Tool version: 1.1.0
+- Contact Annotator API version: 1.1.1
+- Tool version: 1.1.1
 - Docker image: [nlpsandbox/contact-annotator-example]
 
 ## Model
