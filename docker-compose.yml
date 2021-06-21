@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   contact-annotator:
-    image: docker.synapse.org/syn22277123/contact-annotator-example:1.1.2
+    image: docker.synapse.org/syn22277123/contact-annotator-example:1.2.0
     build:
       context: server
       dockerfile: Dockerfile
